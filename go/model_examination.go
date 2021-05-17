@@ -28,13 +28,13 @@ type Examination struct {
 	// Materiāla unikālais identifikators Laboratoriju sistēmā
 	SampleId string `json:"sampleId"`
 
-	SampleType int32 `json:"sampleType"`
+	SampleType string `json:"sampleType"`
 	// Ārstniecības persona, kura atbild par testa rezultātu, Veselības inspecijas piešķirtais identifikators. Iesūta identifikatoru no 2.37 un pēc id18 koda pārbauda pret 2.1 id4 
 	ResponsibleForTestResult string `json:"responsibleForTestResult"`
 	// Ārstniecības personas, kura atbild par testa rezultātu telefona numurs, ietverot valsts kodu un 00 prefiksu
 	ResponsiblePersonPhone string `json:"responsiblePersonPhone"`
 
-	OrdererOfTest *OrdererOfTest `json:"ordererOfTest"`
+	OrdererOfTest string `json:"ordererOfTest"`
 	// Testējamās grupas nosaukums 
 	TestGroup string `json:"testGroup,omitempty"`
 	// Testēšanas organizatora kontaktinformācija brīvā formā (vārds, uzvārds, telefons). SPKC izmantošanai 

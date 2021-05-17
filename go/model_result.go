@@ -18,11 +18,11 @@ type Result struct {
 	// Iesūtītā rezultāta versija (augoša vērtība pret iepriekšējo rezultātu) 
 	VersionId int32 `json:"versionId"`
 
-	ResultStatus int32 `json:"resultStatus"`
+	ResultStatus string `json:"resultStatus"`
 	// Datums un laiks, kurā ārstniecības persona apstiprināja testa rezultātu. Tiek sagaidīts laiks UTC laika zonā 
 	ResultDate time.Time `json:"resultDate"`
 
-	ResultType *ResultType `json:"resultType"`
+	ResultType string `json:"resultType"`
 
 	ResultContent string `json:"resultContent"`
 	// Rezultāta mērvienība, ja kvantitatīvi dati

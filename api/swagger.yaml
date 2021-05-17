@@ -521,18 +521,8 @@ components:
       type: integer
       description: Valsts kods ISO 3166-1 alpha 3 formata https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
     Gender:
-      type: integer
-      description: Personas dzimums
-      enum:
-      - 1
-      - 2
-      - 3
-      - 99
-      x-enumNames:
-      - MALE
-      - FEMALE
-      - OTHER
-      - UNKNOWN
+      type: string
+      description: Personas dzimums. Klasifikators VVIS 2.111
     Address:
       required:
       - addressCountry
@@ -560,15 +550,11 @@ components:
           - $ref: '#/components/schemas/AddressATVK'
       additionalProperties: false
     AddressType:
-      type: integer
+      type: string
+      description: Adreses tips
       enum:
-      - 1
-      - 2
-      - 3
-      x-enumNames:
-      - VZD adreses kods
-      - VZD ATVK adrese
-      - Briva teksta adrese
+      - VZD_ATVK_adrese
+      - briva_teksta_adrese
     AddressRegisterId:
       type: integer
     AddressATVK:
@@ -685,10 +671,8 @@ components:
       type: integer
       description: "Pacienta norādītās kontaktpersonas veids (māsa, brālis u.tml.).\
         \ Dati no VVIS 2.68 klasfikatora."
-    ContactInfoType:
-      type: integer
     AnswerReceiveType:
-      type: integer
+      type: string
       description: "Atbildes saņemšanas veids. (a) ar drošiem  autorizācijas līdzekļ\
         iem (latvija.lv); (b) ar PIN + dzimšanas datumu, izmantojot URL (Laboratorijai\
         \ pacients jābrīdina, ka viņa datiem nebūs pilni auditācijas pieraksti - netiks\
@@ -696,14 +680,9 @@ components:
         \ PIN); (c) gan droši autorizācijas līdzekļi (latvija.lv VPM), gan PIN+dzimš\
         anas datums autorizācijas līdzekļiem "
       enum:
-      - 1
-      - 2
-      - 3
-      - 99
-      x-enumNames:
-      - secure only
-      - pin only
-      - secure and pin
+      - secure_only
+      - pin_only
+      - secure_and_pin
       - unspecified
     Examination:
       required:
@@ -803,32 +782,17 @@ components:
       type: string
       description: "Testa ražotājs. Obligāts, ja testType = RAT"
     SampleType:
-      type: integer
+      type: string
       description: "Parauga veids (klasifikators, provizoriski balstīts uz https://www.hl7.org/fhir/v2/0487/index.html"
     OrdererOfTest:
-      type: integer
+      type: string
       description: "Izmeklējuma pasūtītājs no klasifikatora (paredzamās vērtības:\
         \ Pacients, ārstniecības persona, SPKC, Veselības Inspekcija (VI), cits).\
-        \ Ja pasūtītājs ir SPKC vai VI, tad obligāti ir papildus lauki "
-      enum:
-      - 1
-      - 2
-      - 3
-      - 99
-      x-enumNames:
-      - Pacients
-      - Ārsts
-      - SPKC
-      - VI (Veselibas inspekcija)
-      - cits
+        \ Ja pasūtītājs ir SPKC vai VI, tad obligāti ir papildus lauki"
     ReferralType:
       type: integer
-      description: Nosūtījuma veids
-      x-enumNames:
-      - E-nosūtījums
-      - Papīra formas nosūtījums
-      - Nav nosūtījuma
-      - Nav informācijas
+      description: "Nosūtījuma veids: E-nosūtījums, Papīra formas nosūtījums, Nav\
+        \ nosūtījuma, Nav informācijas"
     ReferralMedicalPerson:
       type: string
       description: Ārstniecības personas reģistrācijas numurs (Nosūtītājs). Aizpildāms
@@ -878,17 +842,13 @@ components:
           description: Rezultāta references intervāls
       additionalProperties: false
     ResultStatus:
-      type: integer
+      type: string
+      description: Rezultāta statuss. Iespējams tiks Balstīts uz FHIR vērtībām (skatīt
+        arī izmantotos kanoniskos statusus katram apakšstatusam)https://www.hl7.org/fhir/valueset-diagnostic-report-status.html
     ResultType:
-      type: integer
+      type: string
       description: "Rezultāta veids (kvantitatīvs, kvalitatīvs). Rezultāta veids nosaka\
-        \ kāds ir atbilstošā rezultāta veids "
-      enum:
-      - 1
-      - 2
-      x-enumNames:
-      - Kvantitatīvs
-      - Kvalitatīvs
+        \ kāds ir atbilstošā rezultāta veids"
     ResultContent:
       type: string
       description: "Rezultāta saturs (ja kvantitatīvs, tad cipars, ja kvalitatīvs,\

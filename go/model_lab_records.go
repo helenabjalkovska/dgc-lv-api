@@ -24,7 +24,7 @@ type LabRecords struct {
 	// Pacienta dzimšanas datums (tikai YYYY-MM-DD formātā)
 	BirthDate string `json:"birthDate"`
 
-	Gender *Gender `json:"gender,omitempty"`
+	Gender string `json:"gender,omitempty"`
 	// Pacienta norādītās uzturēšanās adreses (viena vai vairākas)
 	AddressResidence []Address `json:"addressResidence,omitempty"`
 

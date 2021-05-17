@@ -9,12 +9,12 @@
  */
 package swagger
 // AnswerReceiveType : Atbildes saņemšanas veids. (a) ar drošiem  autorizācijas līdzekļiem (latvija.lv); (b) ar PIN + dzimšanas datumu, izmantojot URL (Laboratorijai pacients jābrīdina, ka viņa datiem nebūs pilni auditācijas pieraksti - netiks rādīts, kas ir apskatījis datus, bet tikai fakts, ka tie ir apskatīti, izmantojot PIN); (c) gan droši autorizācijas līdzekļi (latvija.lv VPM), gan PIN+dzimšanas datums autorizācijas līdzekļiem 
-type AnswerReceiveType int32
+type AnswerReceiveType string
 
 // List of AnswerReceiveType
 const (
-	1_ AnswerReceiveType = "1"
-	2_ AnswerReceiveType = "2"
-	3_ AnswerReceiveType = "3"
-	99_ AnswerReceiveType = "99"
+	SECURE_ONLY AnswerReceiveType = "secure_only"
+	PIN_ONLY AnswerReceiveType = "pin_only"
+	SECURE_AND_PIN AnswerReceiveType = "secure_and_pin"
+	UNSPECIFIED AnswerReceiveType = "unspecified"
 )
