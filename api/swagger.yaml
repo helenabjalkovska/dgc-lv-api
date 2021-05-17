@@ -19,7 +19,7 @@ info:
     email: zzdats@zzdats.lv
   version: "1.0"
 servers:
-- url: https://dgc-dev.zzdats.lv/elab-result
+- url: https://dgc-api.kleintech.software/lab-api
 security:
 - Bearer: []
 tags:
@@ -45,6 +45,10 @@ paths:
       responses:
         "200":
           description: Rezultāts pieņemts apstrādei
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBatch'
         "400":
           content:
             application/json:
@@ -303,6 +307,10 @@ paths:
       responses:
         "200":
           description: Rezultāts pieņemts apstrādei
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBatch'
         "400":
           content:
             application/json:
@@ -605,18 +613,6 @@ components:
       type: integer
     Street:
       type: integer
-    Phone:
-      type: object
-      properties:
-        areaCode:
-          $ref: '#/components/schemas/AreaCode'
-        phoneNumber:
-          pattern: "^[0-9]{1,15}$"
-          type: integer
-          format: int32
-      additionalProperties: false
-    AreaCode:
-      type: integer
     ContactPoint:
       type: object
       properties:
@@ -845,6 +841,17 @@ components:
       type: string
       description: Rezultāta statuss. Iespējams tiks Balstīts uz FHIR vērtībām (skatīt
         arī izmantotos kanoniskos statusus katram apakšstatusam)https://www.hl7.org/fhir/valueset-diagnostic-report-status.html
+      enum:
+      - registered
+      - partial
+      - perliminary
+      - final
+      - amended
+      - corrected
+      - appended
+      - cancelled
+      - entered-in-error
+      - unkown
     ResultType:
       type: string
       description: "Rezultāta veids (kvantitatīvs, kvalitatīvs). Rezultāta veids nosaka\
@@ -853,6 +860,16 @@ components:
       type: string
       description: "Rezultāta saturs (ja kvantitatīvs, tad cipars, ja kvalitatīvs,\
         \ tad pret klasifikatoru (pozitīvs /negatīvs /robežvērtība /apšaubāms) "
+    ResponseBatch:
+      type: object
+      properties:
+        Batchid:
+          type: string
+          description: Iesūtītajai kopai piešķirtais identifikators
+          nullable: true
+      additionalProperties:
+        nullable: true
+      x-schema-name: ResponseBatch
   securitySchemes:
     Bearer:
       type: apiKey

@@ -51,84 +51,84 @@ var routes = Routes{
 	Route{
 		"Index",
 		"GET",
-		"/elab-result/",
+		"/lab-api/",
 		Index,
 	},
 
 	Route{
 		"GetDZSforPerson",
 		strings.ToUpper("Get"),
-		"/elab-result/api/DZSdata/{PersonId}",
+		"/lab-api/api/DZSdata/{PersonId}",
 		GetDZSforPerson,
 	},
 
 	Route{
 		"GetDZSforResult",
 		strings.ToUpper("Get"),
-		"/elab-result/api/DZSdata/{ResultId}",
+		"/lab-api/api/DZSdata/{ResultId}",
 		GetDZSforResult,
 	},
 
 	Route{
 		"GetLabRecordsStatus",
 		strings.ToUpper("Get"),
-		"/elab-result/api/LabRecordsStatus/{PostId}",
+		"/lab-api/api/LabRecordsStatus/{PostId}",
 		GetLabRecordsStatus,
 	},
 
 	Route{
 		"LabRecordsDelete",
 		strings.ToUpper("Delete"),
-		"/elab-result/api/LabRecords/{RecordId}",
+		"/lab-api/api/LabRecords/{RecordId}",
 		LabRecordsDelete,
 	},
 
 	Route{
 		"LabRecordsGet",
 		strings.ToUpper("Get"),
-		"/elab-result/api/LabRecords/{RecordId}",
+		"/lab-api/api/LabRecords/{RecordId}",
 		LabRecordsGet,
 	},
 
 	Route{
 		"LabRecordsPost",
 		strings.ToUpper("Post"),
-		"/elab-result/api/LabRecords",
+		"/lab-api/api/LabRecords",
 		LabRecordsPost,
 	},
 
 	Route{
 		"LabRecordsPut",
 		strings.ToUpper("Put"),
-		"/elab-result/api/LabRecords/{RecordId}",
+		"/lab-api/api/LabRecords/{RecordId}",
 		LabRecordsPut,
 	},
 
 	Route{
 		"GetLabRecordsBatchStatus",
 		strings.ToUpper("Get"),
-		"/elab-result/api/LabRecordsBatch/{Batchid}",
+		"/lab-api/api/LabRecordsBatch/{Batchid}",
 		GetLabRecordsBatchStatus,
 	},
 
 	Route{
 		"LabRecordsBatchDeleteLabRecordsBatch",
 		strings.ToUpper("Delete"),
-		"/elab-result/api/LabRecordsBatch/{Batchid}",
+		"/lab-api/api/LabRecordsBatch/{Batchid}",
 		LabRecordsBatchDeleteLabRecordsBatch,
 	},
 
 	Route{
 		"LabRecordsBatchSaveLabRecordsBatch",
 		strings.ToUpper("Post"),
-		"/elab-result/api/LabRecordsBatch",
+		"/lab-api/api/LabRecordsBatch",
 		LabRecordsBatchSaveLabRecordsBatch,
 	},
 
 	Route{
 		"LabRecordsBatchUpdateLabRecordsBatch",
 		strings.ToUpper("Put"),
-		"/elab-result/api/LabRecordsBatch/{Batchid}",
+		"/lab-api/api/LabRecordsBatch/{Batchid}",
 		LabRecordsBatchUpdateLabRecordsBatch,
 	},
 }
