@@ -1,0 +1,902 @@
+openapi: 3.0.0
+info:
+  title: Lab COVID-19 result API
+  description: "Dokumentācija laboratoriju COVID-19 testa datu API iesūtīšanai. Datu\
+    \ iesūtīšanas mērķis ir saņemt nepieciešamo informāciju par COVID-19 testiem,\
+    \ ko tālāk izmantotu vairākiem mērķiem: DZS (Digitālā Zaļā Sertifikāta) izveidei,\
+    \ VMNVD (LR Veselības ministrijas Nacionālā veselības dienesta) vajadzībām, SPKC\
+    \ (Slimību profilakses un kontroles centra) vajadzībām un VI (Veselības Inspekcijas)\
+    \ vajadzībām. Izveidotās datu struktūras ir specifiskas COVID-19 vajadzībām, kā\
+    \ arī to izveidē ir mēģināts pēc iespējas saglabāt un atkārtoti izmantot EVK klasifikatorus\
+    \ un FHIR datu struktūru nosaukumus atbilstoši: https://www.hl7.org/fhir/diagnosticreport.html\
+    \    COVID-19 Diagnostikas pārskata pievienošana notiek asinhronā režīmā (primā\
+    rā atgrieztā atbilde vienmēr ir HTTP 202 (Accepted)). Atbildē tiek atgriezts konkrē\
+    tā izsaukuma statusa pārbaudes URL, kuru izmantojot organizācija var pieprasī\
+    t iesūtītā pierasījuma verifikācijas statusu. Verifikācijas statusa pārbaude jā\
+    veic, izmantojot Ekponenciālo atkāpšanās pieeju: https://en.wikipedia.org/wiki/Exponential_backoff "
+  contact:
+    name: "SIA ZZ Dats, SIA KleinTech Services"
+    email: zzdats@zzdats.lv
+  version: "1.0"
+servers:
+- url: https://dgc-dev.zzdats.lv/elab-result
+security:
+- Bearer: []
+tags:
+- name: LabRecordsBatch
+  description: Rezultātu masveida datu iesūtīšana
+- name: LabRecords
+  description: Datu apstrāde pa vienam iesūtītajam ierakstam
+paths:
+  /api/LabRecordsBatch:
+    post:
+      tags:
+      - LabRecordsBatch
+      summary: Ielādēt rezultātu kopu
+      operationId: LabRecordsBatch_SaveLabRecordsBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabRecordsBatch'
+        required: true
+        x-name: request
+        x-position: 1
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "500":
+          description: Izpildes kļūda servera pusē
+      security:
+      - Bearer: []
+  /api/LabRecordsBatch/{Batchid}:
+    get:
+      tags:
+      - LabRecordsBatch
+      summary: Pieprasīt ielādes statusu konkrētai datu pakai
+      operationId: getLabRecordsBatchStatus
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Batchid
+        in: path
+        description: ID par kur pieprasīt ielādes statusu
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "500":
+          description: Izpildes kļūda servera pusē
+      security:
+      - Bearer: []
+    put:
+      tags:
+      - LabRecordsBatch
+      summary: Atjaunināt iesūtītu datu pakotni
+      operationId: LabRecordsBatch_UpdateLabRecordsBatch
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Batchid
+        in: path
+        description: "Batch identifikators, ko pieprasīts izdzēst/anulēt"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Iesūtītie dati pieņemti apstrādei
+    delete:
+      tags:
+      - LabRecordsBatch
+      summary: Atsaukt konkrētas datu pakas ielādi
+      operationId: LabRecordsBatch_DeleteLabRecordsBatch
+      parameters:
+      - name: Batchid
+        in: path
+        description: "Batch identifikators, ko pieprasīts izdzēst/anulēt"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "500":
+          description: Izpildes kļūda servera pusē
+  /api/LabRecords:
+    post:
+      tags:
+      - LabRecords
+      summary: Ielādēt viena iesūtītā rezultāta datus
+      operationId: LabRecords_Post
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabRecords'
+        x-name: request
+      responses:
+        "200":
+          description: "TBD: LabRecordPostId"
+  /api/LabRecords/{RecordId}:
+    get:
+      tags:
+      - LabRecords
+      summary: Izgūt viena iesūtītā rezultāta datus
+      operationId: LabRecords_Get
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: RecordId
+        in: path
+        description: "Iesūtītā rezultāta identifikators, ko pieprasa"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          $ref: '#/components/schemas/LabRecords'
+    put:
+      tags:
+      - LabRecords
+      summary: Labot viena iesūtītā rezultāta datus
+      operationId: LabRecords_Put
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: RecordId
+        in: path
+        description: "Iesūtītā rezultāta identifikators, ko pieprasa"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Iesūtītie dati pieņemti apstrādei
+    delete:
+      tags:
+      - LabRecords
+      summary: Dzēst viena iesūtītā rezultāta datus
+      operationId: LabRecords_Delete
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: RecordId
+        in: path
+        description: "Iesūtītā rezultāta identifikators, ko pieprasa"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Veikta ieraksta dzēšana
+  /api/LabRecordsStatus/{PostId}:
+    get:
+      tags:
+      - LabRecords
+      summary: Pieprasīt ielādes statusu konkrētai datu pakai
+      operationId: getLabRecordsStatus
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: PostId
+        in: path
+        description: ID par kur pieprasīt ielādes statusu (atgriezts no konkrēta ieraksta
+          labošanas vai ielādes)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "500":
+          description: Izpildes kļūda servera pusē
+      security:
+      - Bearer: []
+  /api/DZSdata/{PersonId}:
+    get:
+      tags:
+      - DZSdata
+      summary: Izgūt DZS par konkrētu personu
+      operationId: getDZSforPerson
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: PersonId
+        in: path
+        description: ID par kur pieprasīt ielādes statusu (atgriezts no konkrēta ieraksta
+          labošanas vai ielādes)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          description: Persona nav atrasta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/DZSdata/{ResultId}:
+    get:
+      tags:
+      - DZSdata
+      summary: Izgūt DZS par konkrētu iesūtītu izmeklējumu
+      operationId: getDZSforResult
+      parameters:
+      - name: BearerToken
+        in: header
+        description: Bearer token izsniegts sesijas sākumā
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: ResultId
+        in: path
+        description: ID par kur pieprasīt ielādes statusu (atgriezts no konkrēta ieraksta
+          labošanas vai ielādes)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Rezultāts pieņemts apstrādei
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "404":
+          description: Rezultāts nav atrasts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties:
+        nullable: true
+      x-schema-name: ProblemDetails
+    LabRecordsBatch:
+      required:
+      - identifier
+      - requestDate
+      - resultList
+      type: object
+      properties:
+        Batchid:
+          minLength: 1
+          type: string
+          description: Pieprasījuma unikāls identifikators GUID formātā. Sūtot sākotnējo
+            pieprasījumu lauks tiek atstāts tukšs (identifikators tiks saņemts Response
+            ietvarā)
+          format: guid
+          example: 42a6d49b-bc50-4e12-b61a-3e3ad9fa7edd
+        requestDate:
+          minLength: 1
+          type: string
+          description: Pieprasījuma datums un laiks. Tiek sagaidīts laiks UTC zonā
+          format: date-time
+        resultList:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabRecords'
+      additionalProperties: false
+    LabRecords:
+      required:
+      - answerReceiveType
+      - birthDate
+      - countryCode
+      - examinations
+      - firstName
+      - lastName
+      - personCode
+      - sex
+      - subject
+      type: object
+      properties:
+        subject:
+          minLength: 1
+          type: string
+          description: Personas unikāls identifikators Laboratorijas sistēmā
+        countryCode:
+          $ref: '#/components/schemas/CountryCode'
+        personCode:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: "Pacienta identifikācijas kods. Latvijas gadījumā (clountryCode\
+            \ = LV) tas būs personas kods. Ārvalstu gadījumā tas būs pacienta identifikā\
+            cijas numurs, kas pacientam piešķirts attiecīgajā valstī"
+        firstName:
+          maxLength: 300
+          minLength: 0
+          type: string
+          description: Pacienta vārds (vārdi)
+        lastName:
+          maxLength: 300
+          minLength: 0
+          type: string
+          description: Pacienta uzvārds (uzvārdi)
+        birthDate:
+          minLength: 1
+          type: string
+          description: Pacienta dzimšanas datums (tikai YYYY-MM-DD formātā)
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        addressResidence:
+          type: array
+          description: Pacienta norādītās uzturēšanās adreses (viena vai vairākas)
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Address'
+        telco:
+          $ref: '#/components/schemas/ContactPoint'
+        contactPersons:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+        answerReceiveType:
+          $ref: '#/components/schemas/AnswerReceiveType'
+        pin:
+          type: string
+          description: "Pacientam piešķirtais PIN kods, ar kuru tas varēs iegūt DZS\
+            \ pašapkalpošanās portālā. Vismaz 6 simboli, ietver burtus un ciparus.\
+            \ Case Sensitive. "
+          nullable: true
+        examinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Examination'
+      additionalProperties: false
+      description: Saraksts ar iesūtīto testu rezultātu datiem par personu
+    CountryCode:
+      type: integer
+      description: Valsts kods ISO 3166-1 alpha 3 formata https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+    Gender:
+      type: integer
+      description: Personas dzimums
+      enum:
+      - 1
+      - 2
+      - 3
+      - 99
+      x-enumNames:
+      - MALE
+      - FEMALE
+      - OTHER
+      - UNKNOWN
+    Address:
+      required:
+      - addressCountry
+      - addressId
+      - addressType
+      type: object
+      properties:
+        addressId:
+          minLength: 1
+          type: string
+        addressCountry:
+          $ref: '#/components/schemas/CountryCode'
+        addressType:
+          $ref: '#/components/schemas/AddressType'
+        addressRegisterId:
+          $ref: '#/components/schemas/AddressRegisterId'
+        addressText:
+          maxLength: 500
+          minLength: 0
+          type: string
+          nullable: true
+        addressATVK:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/AddressATVK'
+      additionalProperties: false
+    AddressType:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      x-enumNames:
+      - VZD adreses kods
+      - VZD ATVK adrese
+      - Briva teksta adrese
+    AddressRegisterId:
+      type: integer
+    AddressATVK:
+      type: object
+      properties:
+        typeOfTerritory:
+          $ref: '#/components/schemas/TeritoryType'
+        atvk1:
+          $ref: '#/components/schemas/Atkv1'
+        atvk2:
+          $ref: '#/components/schemas/Atkv2'
+        atvk3:
+          $ref: '#/components/schemas/Atkv3'
+        village:
+          $ref: '#/components/schemas/Village'
+        street:
+          $ref: '#/components/schemas/Street'
+        houseNr:
+          maxLength: 5
+          minLength: 0
+          type: string
+          nullable: true
+        houseName:
+          maxLength: 100
+          minLength: 0
+          type: string
+          nullable: true
+        building:
+          maxLength: 10
+          minLength: 0
+          type: string
+          nullable: true
+        flat:
+          maxLength: 100
+          minLength: 0
+          type: string
+          nullable: true
+      additionalProperties: false
+    TeritoryType:
+      type: integer
+    Atkv1:
+      type: integer
+    Atkv2:
+      type: integer
+    Atkv3:
+      type: integer
+    Village:
+      type: integer
+    Street:
+      type: integer
+    Phone:
+      type: object
+      properties:
+        areaCode:
+          $ref: '#/components/schemas/AreaCode'
+        phoneNumber:
+          pattern: "^[0-9]{1,15}$"
+          type: integer
+          format: int32
+      additionalProperties: false
+    AreaCode:
+      type: integer
+    ContactPoint:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Kontaktinformācijas identifikators (unikāls ID laboratorijas\
+            \ ietvaros, ko piešķir savā p usē laboratorija) "
+        system:
+          type: string
+          description: "Norādītā kontakta veids (tipiski: phone vai email)"
+          enum:
+          - phone
+          - fax
+          - email
+          - pager
+          - other
+        value:
+          type: string
+          description: Kontaktinformācijas saturs (atkarībā no veida  telefona nr
+            – IETVEROT VALSTS KODU UN  “00” priekšā vai e-pasts – e-pastam tiks veikta
+            validācija pret e-pasta adreses formātu)
+        use:
+          type: string
+          description: "Norādītā kontakta saziņas mehānisms: tipiski home vai mobile,\
+            \ bet drīkst izmantot arī citas vērtības"
+          enum:
+          - home
+          - work
+          - temp
+          - old
+          - mobile
+        rank:
+          minimum: 1
+          type: integer
+          description: "Komunikācijas secība nodotajam kontakta paveidam (minimālā\
+            \ vērtība 1, bet var būt augstāka)"
+          format: int32
+    ContactPerson:
+      required:
+      - contactInfo
+      - contactInfoType
+      - contactPersonType
+      type: object
+      properties:
+        relationship:
+          $ref: '#/components/schemas/Relationship'
+        telco:
+          $ref: '#/components/schemas/ContactPoint'
+      additionalProperties: false
+      description: 'Pacienta norādīto kontaktpersonu saraksts '
+    Relationship:
+      type: integer
+      description: "Pacienta norādītās kontaktpersonas veids (māsa, brālis u.tml.).\
+        \ Dati no VVIS 2.68 klasfikatora."
+    ContactInfoType:
+      type: integer
+    AnswerReceiveType:
+      type: integer
+      description: "Atbildes saņemšanas veids. (a) ar drošiem  autorizācijas līdzekļ\
+        iem (latvija.lv); (b) ar PIN + dzimšanas datumu, izmantojot URL (Laboratorijai\
+        \ pacients jābrīdina, ka viņa datiem nebūs pilni auditācijas pieraksti - netiks\
+        \ rādīts, kas ir apskatījis datus, bet tikai fakts, ka tie ir apskatīti, izmantojot\
+        \ PIN); (c) gan droši autorizācijas līdzekļi (latvija.lv VPM), gan PIN+dzimš\
+        anas datums autorizācijas līdzekļiem "
+      enum:
+      - 1
+      - 2
+      - 3
+      - 99
+      x-enumNames:
+      - secure only
+      - pin only
+      - secure and pin
+      - unspecified
+    Examination:
+      required:
+      - encounterId
+      - operator
+      - ordererOfTest
+      - responsibleForTestResult
+      - responsiblePersonPhone
+      - resultList
+      - sampleId
+      - sampleType
+      - testDate
+      - testSubject
+      - testType
+      type: object
+      properties:
+        encounterId:
+          minLength: 1
+          type: string
+          description: Vizītes unikālais identifikators Laboratorijas sistēmā
+        testDate:
+          minLength: 1
+          type: string
+          description: Izmeklējuma veikšanas datums un laiks. Tiek sagaidīts laiks
+            UTC zonā
+          format: date-time
+        testSubject:
+          minLength: 1
+          type: string
+          description: 'Izmeklējuma mērķis. Pašreiz konstante COVID-19 '
+        testType:
+          minLength: 1
+          type: string
+          description: Izmeklējuma veids NAAT/RAT (provizoriski no https://loinc.org/sars-cov-2-and-covid-19/
+            )
+        testName:
+          $ref: '#/components/schemas/TestName'
+        testManufacturer:
+          $ref: '#/components/schemas/TestManufacturer'
+        sampleId:
+          minLength: 1
+          type: string
+          description: Materiāla unikālais identifikators Laboratoriju sistēmā
+        sampleType:
+          $ref: '#/components/schemas/SampleType'
+        responsibleForTestResult:
+          minLength: 1
+          type: string
+          description: "Ārstniecības persona, kura atbild par testa rezultātu, Veselī\
+            bas inspecijas piešķirtais identifikators. Iesūta identifikatoru no 2.37\
+            \ un pēc id18 koda pārbauda pret 2.1 id4 "
+        responsiblePersonPhone:
+          minLength: 1
+          type: string
+          description: "Ārstniecības personas, kura atbild par testa rezultātu telefona\
+            \ numurs, ietverot valsts kodu un 00 prefiksu"
+        ordererOfTest:
+          $ref: '#/components/schemas/OrdererOfTest'
+        testGroup:
+          type: string
+          description: 'Testējamās grupas nosaukums '
+          nullable: true
+        testOrganizer:
+          type: string
+          description: "Testēšanas organizatora kontaktinformācija brīvā formā (vā\
+            rds, uzvārds, telefons). SPKC izmantošanai "
+          nullable: true
+        referralType:
+          $ref: '#/components/schemas/ReferralType'
+        referral:
+          type: string
+          description: Nosūtījuma numurs (aizpildāms par papīra nosūtījumu un elektronisko
+            nosūtījumu)
+          nullable: true
+        referralMedicalPerson:
+          $ref: '#/components/schemas/ReferralMedicalPerson'
+        payerForTest:
+          $ref: '#/components/schemas/PayerForTest'
+        cause:
+          type: string
+          description: "Indentificēts COVID-19 infekcijas celms. Provizoriski atbilstoš\
+            s LOINC pre-release klasifikatoram: 96741-4"
+        operator:
+          maxLength: 11
+          minLength: 11
+          type: string
+          description: Datu ievadītāja personas kods
+        resultList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+      additionalProperties: false
+    TestName:
+      type: string
+      description: "Testa nosaukums. Obligāts, ja testType = RAT"
+    TestManufacturer:
+      type: string
+      description: "Testa ražotājs. Obligāts, ja testType = RAT"
+    SampleType:
+      type: integer
+      description: "Parauga veids (klasifikators, provizoriski balstīts uz https://www.hl7.org/fhir/v2/0487/index.html"
+    OrdererOfTest:
+      type: integer
+      description: "Izmeklējuma pasūtītājs no klasifikatora (paredzamās vērtības:\
+        \ Pacients, ārstniecības persona, SPKC, Veselības Inspekcija (VI), cits).\
+        \ Ja pasūtītājs ir SPKC vai VI, tad obligāti ir papildus lauki "
+      enum:
+      - 1
+      - 2
+      - 3
+      - 99
+      x-enumNames:
+      - Pacients
+      - Ārsts
+      - SPKC
+      - VI (Veselibas inspekcija)
+      - cits
+    ReferralType:
+      type: integer
+      description: Nosūtījuma veids
+      x-enumNames:
+      - E-nosūtījums
+      - Papīra formas nosūtījums
+      - Nav nosūtījuma
+      - Nav informācijas
+    ReferralMedicalPerson:
+      type: string
+      description: Ārstniecības personas reģistrācijas numurs (Nosūtītājs). Aizpildāms
+        no VVIS 2.1 klasifikatora
+    PayerForTest:
+      type: integer
+      description: Testa apmaksātājs
+    Result:
+      required:
+      - resultContent
+      - resultDate
+      - resultId
+      - resultStatus
+      - resultType
+      - versionId
+      type: object
+      properties:
+        resultId:
+          type: string
+          description: "Rezultāta unikāls identifikators. Ja rezultāts ir par jau\
+            \ iepriekš iesūtītu izmeklējumu, tad šeit ir jāiesūta iepriekš saņemtais\
+            \ identifikators no response servisa par konkrēto rezultātu. Ja šis ir\
+            \ jauns rezultāts, lauks jāatstāj tukšs"
+        versionId:
+          type: integer
+          description: 'Iesūtītā rezultāta versija (augoša vērtība pret iepriekšējo
+            rezultātu) '
+          format: int32
+        resultStatus:
+          $ref: '#/components/schemas/ResultStatus'
+        resultDate:
+          minLength: 1
+          type: string
+          description: "Datums un laiks, kurā ārstniecības persona apstiprināja testa\
+            \ rezultātu. Tiek sagaidīts laiks UTC laika zonā "
+          format: date-time
+        resultType:
+          $ref: '#/components/schemas/ResultType'
+        resultContent:
+          $ref: '#/components/schemas/ResultContent'
+        resultMetric:
+          type: string
+          description: "Rezultāta mērvienība, ja kvantitatīvi dati"
+          nullable: true
+        resultReferenceValue:
+          type: string
+          description: Rezultāta references intervāls
+      additionalProperties: false
+    ResultStatus:
+      type: integer
+    ResultType:
+      type: integer
+      description: "Rezultāta veids (kvantitatīvs, kvalitatīvs). Rezultāta veids nosaka\
+        \ kāds ir atbilstošā rezultāta veids "
+      enum:
+      - 1
+      - 2
+      x-enumNames:
+      - Kvantitatīvs
+      - Kvalitatīvs
+    ResultContent:
+      type: string
+      description: "Rezultāta saturs (ja kvantitatīvs, tad cipars, ja kvalitatīvs,\
+        \ tad pret klasifikatoru (pozitīvs /negatīvs /robežvērtība /apšaubāms) "
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: "Token Authorization header using Bearer scheme. Example: \"Authorization:\
+        \ Bearer {token}\""
+      name: Authorization
+      in: header
