@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	log.Printf("Server started")
+	log.Printf("Go Server with lab-api started")
 
 	router := sw.NewRouter()
 
