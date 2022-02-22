@@ -1,7 +1,7 @@
 /*
  * Lab COVID-19 result API
  *
- * Dokumentācija laboratoriju COVID-19 testa datu API iesūtīšanai. Datu iesūtīšanas mērķis ir saņemt nepieciešamo informāciju par COVID-19 testiem, ko tālāk izmantotu vairākiem mērķiem: DZS (Digitālā Zaļā Sertifikāta) izveidei, VMNVD (LR Veselības ministrijas Nacionālā veselības dienesta) vajadzībām, SPKC (Slimību profilakses un kontroles centra) vajadzībām un VI (Veselības Inspekcijas) vajadzībām. Izveidotās datu struktūras ir specifiskas COVID-19 vajadzībām, kā arī to izveidē ir mēģināts pēc iespējas saglabāt un atkārtoti izmantot EVK klasifikatorus un FHIR datu struktūru nosaukumus atbilstoši: https://www.hl7.org/fhir/diagnosticreport.html    COVID-19 Diagnostikas pārskata pievienošana notiek asinhronā režīmā (primārā atgrieztā atbilde vienmēr ir HTTP 202 (Accepted)). Atbildē tiek atgriezts konkrētā izsaukuma statusa pārbaudes URL, kuru izmantojot organizācija var pieprasīt iesūtītā pierasījuma verifikācijas statusu. Verifikācijas statusa pārbaude jāveic, izmantojot Ekponenciālo atkāpšanās pieeju: https://en.wikipedia.org/wiki/Exponential_backoff 
+ * Dokumentācija laboratoriju COVID-19 testa datu API iesūtīšanai. Datu iesūtīšanas mērķis ir saņemt nepieciešamo informāciju par COVID-19 testiem, ko tālāk izmantotu vairākiem mērķiem: DZS (Digitālā Zaļā Sertifikāta) izveidei, VMNVD (LR Veselības ministrijas Nacionālā veselības dienesta) vajadzībām, SPKC (Slimību profilakses un kontroles centra) vajadzībām un VI (Veselības Inspekcijas) vajadzībām. Izveidotās datu struktūras ir specifiskas COVID-19 vajadzībām, kā arī to izveidē ir mēģināts pēc iespējas saglabāt un atkārtoti izmantot EVK klasifikatorus un FHIR datu struktūru nosaukumus atbilstoši: https://www.hl7.org/fhir/diagnosticreport.html    COVID-19 Diagnostikas pārskata pievienošana notiek asinhronā režīmā (primārā atgrieztā atbilde vienmēr ir HTTP 202 (Accepted)). Atbildē tiek atgriezts konkrētā izsaukuma statusa pārbaudes URL, kuru izmantojot organizācija var pieprasīt iesūtītā pierasījuma verifikācijas statusu. Verifikācijas statusa pārbaude jāveic, izmantojot Ekponenciālo atkāpšanās pieeju: https://en.wikipedia.org/wiki/Exponential_backoff
  *
  * API version: 1.0
  * Contact: zzdats@zzdats.lv
@@ -10,18 +10,17 @@
 package swagger
 
 type AddressAtvk struct {
+	TypeOfTerritory *int32 `json:"typeOfTerritory,omitempty"`
 
-	TypeOfTerritory int32 `json:"typeOfTerritory,omitempty"`
+	Atvk1 *int32 `json:"atvk1,omitempty"`
 
-	Atvk1 int32 `json:"atvk1,omitempty"`
+	Atvk2 *int32 `json:"atvk2,omitempty"`
 
-	Atvk2 int32 `json:"atvk2,omitempty"`
+	Atvk3 *int32 `json:"atvk3,omitempty"`
 
-	Atvk3 int32 `json:"atvk3,omitempty"`
+	Village *int32 `json:"village,omitempty"`
 
-	Village int32 `json:"village,omitempty"`
-
-	Street int32 `json:"street,omitempty"`
+	Street *int32 `json:"street,omitempty"`
 
 	HouseNr string `json:"houseNr,omitempty"`
 

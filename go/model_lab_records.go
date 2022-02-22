@@ -1,7 +1,7 @@
 /*
  * Lab COVID-19 result API
  *
- * Dokumentācija laboratoriju COVID-19 testa datu API iesūtīšanai. Datu iesūtīšanas mērķis ir saņemt nepieciešamo informāciju par COVID-19 testiem, ko tālāk izmantotu vairākiem mērķiem: DZS (Digitālā Zaļā Sertifikāta) izveidei, VMNVD (LR Veselības ministrijas Nacionālā veselības dienesta) vajadzībām, SPKC (Slimību profilakses un kontroles centra) vajadzībām un VI (Veselības Inspekcijas) vajadzībām. Izveidotās datu struktūras ir specifiskas COVID-19 vajadzībām, kā arī to izveidē ir mēģināts pēc iespējas saglabāt un atkārtoti izmantot EVK klasifikatorus un FHIR datu struktūru nosaukumus atbilstoši: https://www.hl7.org/fhir/diagnosticreport.html    COVID-19 Diagnostikas pārskata pievienošana notiek asinhronā režīmā (primārā atgrieztā atbilde vienmēr ir HTTP 202 (Accepted)). Atbildē tiek atgriezts konkrētā izsaukuma statusa pārbaudes URL, kuru izmantojot organizācija var pieprasīt iesūtītā pierasījuma verifikācijas statusu. Verifikācijas statusa pārbaude jāveic, izmantojot Ekponenciālo atkāpšanās pieeju: https://en.wikipedia.org/wiki/Exponential_backoff 
+ * Dokumentācija laboratoriju COVID-19 testa datu API iesūtīšanai. Datu iesūtīšanas mērķis ir saņemt nepieciešamo informāciju par COVID-19 testiem, ko tālāk izmantotu vairākiem mērķiem: DZS (Digitālā Zaļā Sertifikāta) izveidei, VMNVD (LR Veselības ministrijas Nacionālā veselības dienesta) vajadzībām, SPKC (Slimību profilakses un kontroles centra) vajadzībām un VI (Veselības Inspekcijas) vajadzībām. Izveidotās datu struktūras ir specifiskas COVID-19 vajadzībām, kā arī to izveidē ir mēģināts pēc iespējas saglabāt un atkārtoti izmantot EVK klasifikatorus un FHIR datu struktūru nosaukumus atbilstoši: https://www.hl7.org/fhir/diagnosticreport.html    COVID-19 Diagnostikas pārskata pievienošana notiek asinhronā režīmā (primārā atgrieztā atbilde vienmēr ir HTTP 202 (Accepted)). Atbildē tiek atgriezts konkrētā izsaukuma statusa pārbaudes URL, kuru izmantojot organizācija var pieprasīt iesūtītā pierasījuma verifikācijas statusu. Verifikācijas statusa pārbaude jāveic, izmantojot Ekponenciālo atkāpšanās pieeju: https://en.wikipedia.org/wiki/Exponential_backoff
  *
  * API version: 1.0
  * Contact: zzdats@zzdats.lv
@@ -11,16 +11,19 @@ package swagger
 
 // Saraksts ar iesūtīto testu rezultātu datiem par personu
 type LabRecords struct {
+	LabRecordId        string `json:"labRecordId,omitempty"`
+	LabRecordNoInBatch *int   `json:"labRecordNoInBatch,omitempty"`
+
 	// Personas unikāls identifikators Laboratorijas sistēmā
 	Subject string `json:"subject"`
 
-	CountryCode int32 `json:"countryCode"`
+	CountryCode string `json:"countryCode"`
 	// Pacienta identifikācijas kods. Latvijas gadījumā (clountryCode = LV) tas būs personas kods. Ārvalstu gadījumā tas būs pacienta identifikācijas numurs, kas pacientam piešķirts attiecīgajā valstī
 	PersonCode string `json:"personCode"`
 	// Pacienta vārds (vārdi)
-	FirstName string `json:"firstName"`
+	FirstName string `json:"firstName,omitempty"`
 	// Pacienta uzvārds (uzvārdi)
-	LastName string `json:"lastName"`
+	LastName string `json:"lastName,omitempty"`
 	// Pacienta dzimšanas datums (tikai YYYY-MM-DD formātā)
 	BirthDate string `json:"birthDate"`
 
@@ -28,13 +31,13 @@ type LabRecords struct {
 	// Pacienta norādītās uzturēšanās adreses (viena vai vairākas)
 	AddressResidence []Address `json:"addressResidence,omitempty"`
 
-	Telco *ContactPoint `json:"telco,omitempty"`
+	Telco []ContactPoint `json:"telco,omitempty"`
 
 	ContactPersons []ContactPerson `json:"contactPersons,omitempty"`
 
-	AnswerReceiveType *AnswerReceiveType `json:"answerReceiveType"`
-	// Pacientam piešķirtais PIN kods, ar kuru tas varēs iegūt DZS pašapkalpošanās portālā. Vismaz 6 simboli, ietver burtus un ciparus. Case Sensitive. 
+	AnswerReceiveType string `json:"answerReceiveType"`
+	// Pacientam piešķirtais PIN kods, ar kuru tas varēs iegūt DZS pašapkalpošanās portālā. Vismaz 6 simboli, ietver burtus un ciparus. Case Sensitive.
 	Pin string `json:"pin,omitempty"`
 
-	Examinations []Examination `json:"examinations"`
+	Examinations Examination `json:"examinations"`
 }

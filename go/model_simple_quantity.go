@@ -9,25 +9,8 @@
  */
 package swagger
 
-import (
-	"time"
-)
-
-type Result struct {
-	// Rezultāta unikāls identifikators. Ja rezultāts ir par jau iepriekš iesūtītu izmeklējumu, tad šeit ir jāiesūta iepriekš saņemtais identifikators no response servisa par konkrēto rezultātu. Ja šis ir jauns rezultāts, lauks jāatstāj tukšs
-	ResultId string `json:"resultId,omitempty"`
-
-	// Iesūtītā rezultāta versija (augoša vērtība pret iepriekšējo rezultātu)
-	VersionId *int32 `json:"versionId"`
-
-	ResultStatus string `json:"resultStatus"`
-
-	// Datums un laiks, kurā ārstniecības persona apstiprināja testa rezultātu. Tiek sagaidīts laiks UTC laika zonā
-	ResultDate time.Time `json:"resultDate"`
-
-	ResultType           string          `json:"resultType"`
-	ResultQualityValue   string          `json:"resultQualityValue,omitempty"`
-	ResultQuantityValue  *SimpleQuantity `json:"resultQuantityValue,omitempty"`
-	ResultReferenceValue *ReferenceRange `json:"resultReferenceValue,omitempty"`
-	ResultExplanation    string          `json:"resultExplanation,omitempty"`
+type SimpleQuantity struct {
+	Comparator string   `json:"comparator,omitempty"`
+	Value      *float64 `json:"value,omitempty"`
+	Unit       string   `json:"unit,omitempty"`
 }
